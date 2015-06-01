@@ -10,7 +10,6 @@ import (
 	"github.com/rackspace/gophercloud/rackspace"
 	"github.com/rackspace/gophercloud/rackspace/objectstorage/v1/objects"
 	"io"
-	"log"
 	"os"
 )
 
@@ -36,7 +35,7 @@ func getServiceClient(userName string, apiKey string, region string) (*gopherclo
 	return serviceClient, nil
 }
 
-func getObjectsList(serviceClient *gophercloud.ServiceClient, contaier string) {
+func getObjectsList(serviceClient *gophercloud.ServiceClient, contaier string) error {
 	options := &osObjects.ListOpts{Full: true}
 
 	objects.List(serviceClient, contaier, options).EachPage(func(page pagination.Page) (bool, error) {
@@ -46,12 +45,13 @@ func getObjectsList(serviceClient *gophercloud.ServiceClient, contaier string) {
 		}
 
 		for _, name := range nameList {
-			// ...
 			fmt.Printf("%+v\n", name)
 		}
 
 		return true, nil
 	})
+
+	return nil
 }
 
 func getWriterForPath(path string) (*bufio.Writer, error) {
@@ -105,7 +105,7 @@ type BaseFileCommand struct {
 	Object string         `short:"o" required:"true" long:"object"`
 }
 
-var options struct {
+type Options struct {
 	UserName  string `short:"u" required:"true" long:"user-name" description:"Username"`
 	ApiKey    string `short:"k" required:"true" long:"api-key" description:"Api key"`
 	Region    string `short:"r" required:"false" long:"region" description:"Container region" default:"LON"`
@@ -113,59 +113,55 @@ var options struct {
 
 	DownloadCommand struct {
 		*BaseFileCommand
-	} `command:"download"`
+	} `command:"download" description:"Downaload object from storage"`
 
 	UploadCommand struct {
 		*BaseFileCommand
-	} `command:"upload"`
+	} `command:"upload" description:"Upload object to storage"`
 
 	ListCommand struct {
-	} `command:"list"`
+	} `command:"list" description:"Get list ob objects in storage"`
 }
 
-func main() {
+func doAction() error {
+	var options Options
 	parser := flags.NewParser(&options, flags.Default)
 
-	// var listCommand ListCommand
-	// parser.AddCommand("list", "List objects", "List of objects in container", &listCommand)
-
-	// var uploadCommand UploadCommand
-	// parser.AddCommand("upload", "Upload file", "Upload file to RackSpace", &uploadCommand)
-
-	// var downloadCommand DownloadCommand
-	// parser.AddCommand("download", "Download file", "Download file from RackSpace", &downloadCommand)
-
-	// Parse flags from `args'. Note that here we use flags.ParseArgs for
-	// the sake of making a working example. Normally, you would simply use
-	// flags.Parse(&opts) which uses os.Args
-
 	if _, err := parser.Parse(); err != nil {
-		log.Fatal(err)
-
-		panic(err)
+		return err
 	}
-
-	//fmt.Printf("=> %+v %+v\n", options, parser.Active)
 
 	serviceClient, err := getServiceClient(options.UserName, options.ApiKey, options.Region)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	switch parser.Active {
 	case parser.Command.Find("list"):
-		getObjectsList(serviceClient, options.Container)
+		return getObjectsList(serviceClient, options.Container)
+
 	case parser.Command.Find("upload"):
 		reader, err := getReaderForPath(string(options.UploadCommand.File))
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-		uploadObject(serviceClient, options.Container, options.UploadCommand.Object, reader)
+		return uploadObject(serviceClient, options.Container, options.UploadCommand.Object, reader)
+
 	case parser.Command.Find("download"):
 		writer, err := getWriterForPath(string(options.DownloadCommand.File))
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-		downloadObject(serviceClient, options.Container, options.DownloadCommand.Object, writer)
+		return downloadObject(serviceClient, options.Container, options.DownloadCommand.Object, writer)
 	}
+
+	return nil
+}
+
+func main() {
+	if err := doAction(); err != nil {
+		os.Exit(1)
+	}
+
+	os.Exit(0)
 }
