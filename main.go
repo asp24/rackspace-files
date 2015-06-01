@@ -86,54 +86,23 @@ func downloadObject(serviceClient *gophercloud.ServiceClient, container string, 
 	return dr.Body.Close()
 }
 
-func getReaderForPath(path string) (*bufio.Reader, error) {
+func getReaderForPath(path string) (io.ReadSeeker, error) {
 	if path == "-" {
-		reader := bufio.NewReader(os.Stdin)
-
-		return reader, nil
+		return os.Stdin, nil
 	}
 
-	f, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer f.Close()
-
-	reader := bufio.NewReader(f)
-
-	return reader, nil
+	return os.Open(path)
 }
 
-// func uploadObject() error {
-//   //
-// }
+func uploadObject(serviceClient *gophercloud.ServiceClient, container string, objectName string, reader io.ReadSeeker) error {
+	res := objects.Create(serviceClient, container, objectName, reader, nil)
+
+	return res.Err
+}
 
 type BaseFileCommand struct {
 	File   flags.Filename `short:"f" required:"true" long:"file" default:"-"`
 	Object string         `short:"o" required:"true" long:"object"`
-}
-
-type DownloadCommand struct {
-	*BaseFileCommand
-}
-
-func (x *DownloadCommand) Execute(args []string) error {
-	//x.BaseFileCommand
-	fmt.Printf("Adding (all=%+v): %#v\n", x.BaseFileCommand.Object, args)
-	return nil
-}
-
-type UploadCommand struct {
-	*BaseFileCommand
-}
-
-type ListCommand struct {
-}
-
-func (x *ListCommand) Execute(args []string) error {
-	fmt.Printf("Adding (all=%v): %#v\n", x, args)
-	return nil
 }
 
 var options struct {
@@ -176,7 +145,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("=> %+v %+v\n", options, parser.Active)
+	//fmt.Printf("=> %+v %+v\n", options, parser.Active)
 
 	serviceClient, err := getServiceClient(options.UserName, options.ApiKey, options.Region)
 	if err != nil {
@@ -187,7 +156,11 @@ func main() {
 	case parser.Command.Find("list"):
 		getObjectsList(serviceClient, options.Container)
 	case parser.Command.Find("upload"):
-
+		reader, err := getReaderForPath(string(options.UploadCommand.File))
+		if err != nil {
+			log.Fatal(err)
+		}
+		uploadObject(serviceClient, options.Container, options.UploadCommand.Object, reader)
 	case parser.Command.Find("download"):
 		writer, err := getWriterForPath(string(options.DownloadCommand.File))
 		if err != nil {
