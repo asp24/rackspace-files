@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 _completion_rackspace_files() {
     # All arguments except the first one
     args=("${COMP_WORDS[@]:1:$COMP_CWORD}")
