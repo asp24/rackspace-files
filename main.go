@@ -83,18 +83,15 @@ func downloadObject(serviceClient *gophercloud.ServiceClient, container string, 
 		return dr.Err
 	}
 
+	defer dr.Body.Close()
 	defer writer.Flush()
 
-	// content, err := result.ExtractContent()
-	// result.Body is also an io.ReadCloser of the file content that may be consumed as a stream.
-
 	_, err := io.Copy(writer, dr.Body)
+	// fmt.Printf("Written %d\n", bytes)
 
 	if err != nil {
 		return err
 	}
-
-	// fmt.Printf("Writed %d\n", bytes)
 
 	return dr.Body.Close()
 }
