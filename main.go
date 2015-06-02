@@ -133,7 +133,7 @@ type Options struct {
 	} `command:"upload" description:"Upload object to storage"`
 
 	ListCommand struct {
-	} `command:"list" description:"Get list ob objects in storage"`
+	} `command:"list" description:"Get list of objects in storage"`
 
 	DeleteCommand struct {
 		Object string `short:"o" required:"true" long:"object"`
