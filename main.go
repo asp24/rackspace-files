@@ -134,7 +134,8 @@ func doAction() error {
 	var options Options
 	parser := flags.NewParser(&options, flags.Default)
 
-	if _, err := parser.Parse(); err != nil {
+	_, err := parser.Parse()
+	if err != nil {
 		return err
 	}
 
@@ -166,7 +167,8 @@ func doAction() error {
 }
 
 func main() {
-	if err := doAction(); err != nil {
+	err := doAction()
+	if err != nil {
 		os.Exit(1)
 	}
 
