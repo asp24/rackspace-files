@@ -1,0 +1,13 @@
+Source: rackspace-files
+Section: devel
+Priority: optional
+Maintainer: Yuriy Berest <djua.com@gmail.com>
+Standards-Version: 0.0.1
+Build-Depends: debhelper (>= 8.0.0)
+Homepage: <https://github.com/asp24/rackspace-files>
+
+Package: rackspace-files
+Architecture: amd64
+Depends: lsb-base (>= 3.0-6)
+Description: Simple tool for files managment in rackspace cloud. Now it supports list, delete, upload, download commands
+

@@ -1,0 +1,43 @@
+rackspacfe-files (0.0.2) UNRELEASED; urgency=medium
+
+  [ Yuriy Berest ]
+  * Initial commit
+  * Cleanup. App upload command
+  * Refactoring. Process exit code
+  * Fix download bufer flush on download
+  * Empty README added
+  * Fix CS
+  * Implemented delete command. Clouses #1
+  * Fix missprint
+  * Close reader after copy
+
+  [ Yuriy ]
+  * Update README.md
+  * Update README.md
+  * Update README.md
+  * Update README.md
+
+  [ Black Hawk ]
+  * add completion file
+  * add gitignore
+  * add normal first line to completion script
+  * add empty debian dir
+
+  [ Andrey S. Zakhariashchev ]
+
+ -- Yuriy Berest <djua.com@gmail.com>  Tue, 02 Jun 2015 12:10:41 +0300
+
+rackspacfe-files (0.0.2) trusty; urgency=medium
+
+  * UNRELEASED
+
+ -- Andrey S. Zakhariashchev <bh@heaven>  Tue, 02 Jun 2015 12:10:34 +0300
+
+rackspacfe-files (0.0.1) unstable; urgency=low
+
+  [ Yuriy Berest ]
+  * Initial commit
+
+  [ Andrey S. Zakhariashchev ]
+
+ -- Yuriy Berest <djua.com@gmail.com>  Mon, 01 Jun 2015 21:11:27 +0300
