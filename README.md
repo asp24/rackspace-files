@@ -3,11 +3,10 @@ Simple tool for files managment in rackspace cloud. Now it supports `list`, `del
 
 ## Setup / Install
 
-Install go needed
+Install go if needed
 
     apt-get install golang
     export GOPATH=~/golang
-    mkdir -p ${GOPATH}
 
 Then get and compile RackspaceFiles:
 
