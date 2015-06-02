@@ -3,13 +3,16 @@ Simple tool for files managment in rackspace cloud. Now it supports `list`, `del
 
 ## Setup / Install
 
-Get and compile RackspaceFiles:
+Install go needed
 
     apt-get install golang
     export GOPATH=~/golang
     mkdir -p ${GOPATH}
-    go get https://github.com/asp24/rackspace-files
-    cd $GOPATH/src/https://github.com/asp24/rackspace-files
+
+Then get and compile RackspaceFiles:
+
+    go get github.com/asp24/rackspace-files
+    cd $GOPATH/src/github.com/asp24/rackspace-files
     go build -v
 
 ### How-to use
