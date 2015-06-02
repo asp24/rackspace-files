@@ -54,6 +54,12 @@ func getObjectsList(serviceClient *gophercloud.ServiceClient, contaier string) e
 	return nil
 }
 
+func deleteObject(serviceClient *gophercloud.ServiceClient, contaier string, objectName string) error {
+	_, err := objects.Delete(serviceClient, contaier, objectName, nil).Extract()
+
+	return err
+}
+
 func getWriterForPath(path string) (*bufio.Writer, error) {
 	if path == "-" {
 		writer := bufio.NewWriter(os.Stdout)
@@ -128,6 +134,10 @@ type Options struct {
 
 	ListCommand struct {
 	} `command:"list" description:"Get list ob objects in storage"`
+
+	DeleteCommand struct {
+		Object string `short:"o" required:"true" long:"object"`
+	} `command:"delete" description:"Delete object from storage"`
 }
 
 func doAction() error {
@@ -147,6 +157,9 @@ func doAction() error {
 	switch parser.Active {
 	case parser.Command.Find("list"):
 		return getObjectsList(serviceClient, options.Container)
+
+	case parser.Command.Find("delete"):
+		return deleteObject(serviceClient, options.Container, options.DeleteCommand.Object)
 
 	case parser.Command.Find("upload"):
 		reader, err := getReaderForPath(string(options.UploadCommand.File))
